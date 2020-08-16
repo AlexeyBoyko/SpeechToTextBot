@@ -8,21 +8,19 @@ import java.io.IOException;
 
 public class FFmpegWrapper {
 
-    public String convertToWAV(String inputFileName) throws IOException {
-        String outputFileName = "output.wav";
-        FFmpeg ffmpeg = new FFmpeg("ffmpeg.exe");
+    public static String convertToWAV(String inputFileName) throws IOException {
+        String outputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".")) + ".wav"; // меняем расширение
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(inputFileName)     // Filename, or a FFmpegProbeResult
-                .overrideOutputFiles(true) // Override the output if it exists
-                .addOutput(outputFileName)   // Filename for the destination
+                .overrideOutputFiles(true)
+                .addOutput(outputFileName)
                 //.setFormat("mp4")        // Format is inferred from filename, or can be set
                 //.setTargetSize(250_000)  // Aim for a 250KB file
                 .setAudioCodec("pcm_s16le")
                 .setAudioSampleRate(16000)
                 .done();
-        FFmpegExecutor executor = new FFmpegExecutor(ffmpeg);
         // Run a one-pass encode
-        executor.createJob(builder).run();
+        new FFmpegExecutor(new FFmpeg("ffmpeg.exe")).createJob(builder).run();
         return outputFileName;
     }
 }
