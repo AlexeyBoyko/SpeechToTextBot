@@ -1,2 +1,2 @@
 # SpeechToTextBot
-Integration of Telegram bot with Yandex Speech Kit for voice messages recognition using Java
+Java bot for recognition of Telegram voice messages with Yandex SpeechKit API
