@@ -1,4 +1,4 @@
-package com.company;
+package ru.example;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

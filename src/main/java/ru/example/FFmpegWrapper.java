@@ -1,4 +1,4 @@
-package com.company;
+package ru.example;
 
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;

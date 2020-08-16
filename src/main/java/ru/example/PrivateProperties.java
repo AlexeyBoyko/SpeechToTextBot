@@ -1,4 +1,4 @@
-package com.company;
+package ru.example;
 
 import java.io.File;
 import java.io.FileInputStream;
