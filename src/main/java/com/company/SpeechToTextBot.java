@@ -77,10 +77,10 @@ public class SpeechToTextBot extends TelegramLongPollingBot {
     }
 
     public String getBotUsername() {
-        return "YOUR_TELEGRAM_BOT_USERNAME";
+        return ConfigReader.getTelegramBotUsername();
     }
 
     public String getBotToken() {
-        return "YOUR_TELEGRAM_BOT_TOKEN";
+        return ConfigReader.getTelegramBotToken();
     }
 }

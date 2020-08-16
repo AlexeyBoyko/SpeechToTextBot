@@ -11,7 +11,7 @@ import java.net.URL;
 
 public class SpeechRecognition {
 
-    private final String API_KEY = "YOUR_YANDEX_SPEECHKIT_API_KEY";
+    private final String API_KEY = ConfigReader.getYandexSpeechkitApiKey();
 
     private final String REQUEST = "https://asr.yandex.net/asr_xml?" +
             "uuid=01ae133b744628b58fb536d496daa1e6&" +
