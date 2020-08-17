@@ -18,7 +18,7 @@ public class XmlParser {
         doc.getDocumentElement().normalize(); // удаляем лишние пробелы между тэгами и т.д.
         Element recognitionResults = doc.getDocumentElement();
         // проверяем признак успешного распознавания
-        if (recognitionResults.getAttribute("success").equals("1")) {
+        if ("1".equals(recognitionResults.getAttribute("success"))) {
             // выдаём самый первый вариант (видимо, наиболее вероятный)
             return doc.getElementsByTagName("variant").item(0).getTextContent();
         } else {
