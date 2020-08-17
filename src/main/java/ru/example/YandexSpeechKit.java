@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class SpeechRecognition {
+public class YandexSpeechKit {
 
     private static final String API_KEY = Config.YANDEX_SPEECHKIT_API_KEY;
 
@@ -16,7 +16,7 @@ public class SpeechRecognition {
             "key=" + API_KEY + "&" +
             "topic=queries";
 
-    public static String getString(byte[] data) throws IOException {
+    public static String recognizeText(byte[] data) throws IOException {
         String res = "";
         HttpURLConnection connection = ((HttpURLConnection) new URL(REQUEST).openConnection());
         try {

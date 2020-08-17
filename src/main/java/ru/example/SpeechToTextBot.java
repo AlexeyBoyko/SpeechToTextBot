@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 public class SpeechToTextBot extends TelegramLongPollingBot {
@@ -33,27 +34,31 @@ public class SpeechToTextBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message == null || !message.hasVoice()) {
-            sendReplyMessage(message, "***ГОЛОСОВОЕ СООБЩЕНИЕ НЕ НАЙДЕНО***");
+        Message incomingMessage = update.getMessage();
+        if (incomingMessage == null || !incomingMessage.hasVoice()) {
+            sendReplyMessage(incomingMessage, "***ГОЛОСОВОЕ СООБЩЕНИЕ НЕ НАЙДЕНО***");
         } else {
             // значение по умолчанию будет перебито ответом от Яндекса если не возникнет исключения
-            String responseMessage = "***ТЕХНИЧЕСКАЯ ОШИБКА***";
+            String responseMessageText = "***ТЕХНИЧЕСКАЯ ОШИБКА***";
             try {
-                GetFile getFile = new GetFile().setFileId(message.getVoice().getFileId());
+                GetFile getFile = new GetFile().setFileId(incomingMessage.getVoice().getFileId());
                 URL fileURL = new URL(execute(getFile).getFileUrl(getBotToken()));
-                String originalFileName = "voiceMessage.oga";
-                FileUtils.copyURLToFile(fileURL, new File(originalFileName));
-                byte[] audioData = FFmpegWrapper.convertToWAV(originalFileName);
-                String xmlTextMessage = SpeechRecognition.getString(audioData);
-                //System.out.println(xmlTextMessage);
-                responseMessage = XmlParser.parseYandexResponse(xmlTextMessage);
+                byte[] audioData = safeDownloadAndConvert(fileURL);
+                String xmlResponse = YandexSpeechKit.recognizeText(audioData);
+                //System.out.println(xmlResponse);
+                responseMessageText = XmlParser.parseYandexResponse(xmlResponse);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                sendReplyMessage(message, responseMessage);
+                sendReplyMessage(incomingMessage, responseMessageText);
             }
         }
+    }
+
+    private synchronized byte[] safeDownloadAndConvert(URL fileURL) throws IOException {
+        String originalFileName = "voiceMessage.oga";
+        FileUtils.copyURLToFile(fileURL, new File(originalFileName));
+        return FFmpegWrapper.convertToWAV(originalFileName);
     }
 
     private void sendReplyMessage(Message replyToMessage, String text) {
