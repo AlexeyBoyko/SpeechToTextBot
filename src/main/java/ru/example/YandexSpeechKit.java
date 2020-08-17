@@ -1,5 +1,8 @@
 package ru.example;
 
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,8 +19,8 @@ public class YandexSpeechKit {
             "key=" + API_KEY + "&" +
             "topic=queries";
 
-    public static String recognizeText(byte[] data) throws IOException {
-        String res = "";
+    public static String recognizeText(byte[] data) throws IOException, ParserConfigurationException, SAXException {
+        String xmlResponse = "";
         HttpURLConnection connection = ((HttpURLConnection) new URL(REQUEST).openConnection());
         try {
             connection.setDoOutput(true);
@@ -40,11 +43,11 @@ public class YandexSpeechKit {
                             connection.getInputStream()))) {
                 String decodedString;
                 while ((decodedString = in.readLine()) != null) {
-                    res += decodedString;
+                    xmlResponse += decodedString;
                 }
             }
 
-            return res;
+            return XmlParser.parseYandexResponse(xmlResponse);
         } finally {
             connection.disconnect();
         }

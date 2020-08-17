@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SpeechToTextBot extends TelegramLongPollingBot {
@@ -41,18 +42,20 @@ public class SpeechToTextBot extends TelegramLongPollingBot {
             // значение по умолчанию будет перебито ответом от Яндекса если не возникнет исключения
             String responseMessageText = "***ТЕХНИЧЕСКАЯ ОШИБКА***";
             try {
-                GetFile getFile = new GetFile().setFileId(incomingMessage.getVoice().getFileId());
-                URL fileURL = new URL(execute(getFile).getFileUrl(getBotToken()));
+                URL fileURL = getFileURL(incomingMessage);
                 byte[] audioData = safeDownloadAndConvert(fileURL);
-                String xmlResponse = YandexSpeechKit.recognizeText(audioData);
-                //System.out.println(xmlResponse);
-                responseMessageText = XmlParser.parseYandexResponse(xmlResponse);
+                responseMessageText = YandexSpeechKit.recognizeText(audioData);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 sendReplyMessage(incomingMessage, responseMessageText);
             }
         }
+    }
+
+    private URL getFileURL(Message containerMessage) throws TelegramApiException, MalformedURLException {
+        GetFile getFile = new GetFile().setFileId(containerMessage.getVoice().getFileId());
+        return new URL(execute(getFile).getFileUrl(getBotToken()));
     }
 
     private synchronized byte[] safeDownloadAndConvert(URL fileURL) throws IOException {
