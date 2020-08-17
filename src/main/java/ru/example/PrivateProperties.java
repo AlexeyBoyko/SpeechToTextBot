@@ -5,12 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class PrivateProperties {
-    public static Properties props = new Properties();
-
-    static {
+public class PrivateProperties extends Properties {
+    public PrivateProperties() {
         try {
-            props.load(new FileInputStream(new File("private.config")));
+            this.load(new FileInputStream(new File("private.config")));
         } catch (IOException e) {
             e.printStackTrace();
         }
