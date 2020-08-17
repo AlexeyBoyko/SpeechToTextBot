@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 public class FFmpegWrapper {
 
     public static byte[] convertToWAV(String inputFileName) throws IOException {
-        String outputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".")) + ".wav"; // меняем расширение
+        String outputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".")) + ".wav"; // меняем только расширение
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(inputFileName)     // Filename, or a FFmpegProbeResult
                 .overrideOutputFiles(true)
