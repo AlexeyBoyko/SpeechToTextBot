@@ -40,6 +40,8 @@ public class SpeechToTextBot extends TelegramLongPollingBot {
         if (message == null || !message.hasVoice()) {
             sendReplyMessage(message, "***ГОЛОСОВОЕ СООБЩЕНИЕ НЕ НАЙДЕНО***");
         } else {
+            // значение по умолчанию будет перебито ответом от Яндекса если не возникнет исключения
+            String responseMessage = "***ТЕХНИЧЕСКАЯ ОШИБКА***";
             try {
                 GetFile getFile = new GetFile();
                 getFile.setFileId(message.getVoice().getFileId());
@@ -47,14 +49,14 @@ public class SpeechToTextBot extends TelegramLongPollingBot {
                 InputStream in = new URL(file.getFileUrl(getBotToken())).openStream();
                 String originalFileName = "voiceMessage.oga";
                 Files.copy(in, Paths.get(originalFileName), StandardCopyOption.REPLACE_EXISTING);
-                String convertedFileName = FFmpegWrapper.convertToWAV(originalFileName);
-                byte[] audioData = Files.readAllBytes(Paths.get(convertedFileName));
+                byte[] audioData = FFmpegWrapper.convertToWAV(originalFileName);
                 String xmlTextMessage = SpeechRecognition.getString(audioData);
                 System.out.println(xmlTextMessage);
-                sendReplyMessage(message, XmlParser.parseYandexResponse(xmlTextMessage));
+                responseMessage = XmlParser.parseYandexResponse(xmlTextMessage);
             } catch (Exception e) {
                 e.printStackTrace();
-                sendReplyMessage(message, "***ТЕХНИЧЕСКАЯ ОШИБКА***");
+            } finally {
+                sendReplyMessage(message, responseMessage);
             }
         }
     }

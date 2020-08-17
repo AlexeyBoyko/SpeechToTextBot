@@ -5,10 +5,12 @@ import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FFmpegWrapper {
 
-    public static String convertToWAV(String inputFileName) throws IOException {
+    public static byte[] convertToWAV(String inputFileName) throws IOException {
         String outputFileName = inputFileName.substring(0, inputFileName.lastIndexOf(".")) + ".wav"; // меняем расширение
         FFmpegBuilder builder = new FFmpegBuilder()
                 .setInput(inputFileName)     // Filename, or a FFmpegProbeResult
@@ -21,7 +23,7 @@ public class FFmpegWrapper {
                 .done();
         // Run a one-pass encode
         new FFmpegExecutor(new FFmpeg("ffmpeg.exe")).createJob(builder).run();
-        return outputFileName;
+        return Files.readAllBytes(Paths.get(outputFileName));
     }
 }
 
